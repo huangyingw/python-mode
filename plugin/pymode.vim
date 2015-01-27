@@ -108,7 +108,7 @@ call pymode#default("g:pymode_lint_ignore", "")
 call pymode#default("g:pymode_lint_select", "")
 
 " Auto open cwindow if any errors has been finded
-call pymode#default("g:pymode_lint_cwindow", 1)
+call pymode#default("g:pymode_lint_cwindow", 0)
 
 " If not emply, errors will be sort by defined relevance
 " E.g. let g:pymode_lint_sort = ['E', 'C', 'I']  " Errors first 'E',
