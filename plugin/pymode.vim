@@ -37,7 +37,7 @@ call pymode#default("g:pymode_indent", 1)
 " Enable/disable pymode folding for pyfiles.
 call pymode#default("g:pymode_folding", 1)
 " Change for folding customization (by example enable fold for 'if', 'for')
-call pymode#default("g:pymode_folding_regex", '^\s*\%(class\|if\|finally\|try\|else\|for\|def\) \+')
+call pymode#default("g:pymode_folding_regex", '^\s*\%(class\|if\|finally\|elif\|try\|else\|for\|def\) \+')
 
 " Enable/disable python motion operators
 call pymode#default("g:pymode_motion", 1)
