@@ -49,7 +49,6 @@ call pymode#default("g:pymode_trim_whitespaces", 1)
 
 " Set recomended python options
 call pymode#default("g:pymode_options", 1)
-call pymode#default("g:pymode_options_max_line_length", 0)
 call pymode#default("g:pymode_options_colorcolumn", 1)
 
 " Enable/disable vertical display of python documentation
@@ -136,13 +135,13 @@ call pymode#default("g:pymode_lint_pyflakes_symbol", "FF")
 
 " Code checkers options
 call pymode#default("g:pymode_lint_options_pep8",
-    \ {'max_line_length': g:pymode_options_max_line_length})
+            \ {})
 
 call pymode#default("g:pymode_lint_options_pylint",
-    \ {'max-line-length': g:pymode_options_max_line_length})
+            \ {})
 
 call pymode#default("g:pymode_lint_options_mccabe",
-    \ {'complexity': 12})
+            \ {'complexity': 12})
 
 call pymode#default("g:pymode_lint_options_pep257", {})
 call pymode#default("g:pymode_lint_options_pyflakes", { 'builtins': '_' })
