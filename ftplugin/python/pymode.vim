@@ -74,7 +74,7 @@ if g:pymode_options
         setlocal number
     endif
     setlocal wrap
-    exe "setlocal textwidth=" . g:pymode_options_max_line_length
+    " exe "setlocal textwidth=" . g:pymode_options_max_line_length
     if g:pymode_options_colorcolumn && exists('+colorcolumn')
         setlocal colorcolumn=+1
     endif
