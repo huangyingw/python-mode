@@ -1952,10 +1952,6 @@ def get_parser(prog='pep8', version=__version__):
                       help="print total number of errors and warnings "
                            "to standard error and set exit code to 1 if "
                            "total is not null")
-    parser.add_option('--max-line-length', type='int', metavar='n',
-                      default=MAX_LINE_LENGTH,
-                      help="set maximum allowed line length "
-                           "(default: %default)")
     parser.add_option('--hang-closing', action='store_true',
                       help="hang closing bracket instead of matching "
                            "indentation of opening bracket's line")
