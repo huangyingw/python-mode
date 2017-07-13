@@ -1,0 +1,5 @@
+[remote "python-mode"]
+    url = git@github.com:python-mode/python-mode.git
+    fetch = +refs/heads/*:refs/remotes/python-mode/*
+[push]
+    remote = origin
