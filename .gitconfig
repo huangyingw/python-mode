@@ -3,3 +3,6 @@
     fetch = +refs/heads/*:refs/remotes/python-mode/*
 [push]
     remote = origin
+[gsync]
+    remote = python-mode
+    branch = master
