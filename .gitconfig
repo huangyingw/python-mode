@@ -1,8 +1,12 @@
 [remote "python-mode"]
     url = git@github.com:python-mode/python-mode.git
     fetch = +refs/heads/*:refs/remotes/python-mode/*
+[remote "github"]
+    url = git@github.com:huangyingw/python-mode.git
+    fetch = +refs/heads/*:refs/remotes/github/*
 [push]
     remote = origin
+    remote = github
 [gsync]
     remote = python-mode
     branch = master
