@@ -105,6 +105,7 @@ fun! pymode#buffer_pre_write() "{{{
 endfunction "}}}
 
 fun! pymode#buffer_post_write() "{{{
+    call pymode#remove_unuses()
     if g:pymode_rope
         if g:pymode_rope_regenerate_on_write && b:pymode_modified
             call pymode#debug('regenerate')
@@ -131,3 +132,8 @@ fun! pymode#quit() "{{{
         au! * <buffer>
     augroup END
 endfunction "}}}
+
+fun! pymode#remove_unuses() "{{{
+    exec '!~/loadrc/pythonrc/remove-unuses.sh ' . '"' .  expand('%:p') . '"'
+endfunction "}}}
+
