@@ -10,3 +10,11 @@
 [gsync]
     remote = python-mode
     branch = master
+[branch "dev.fix"]
+    remote = origin
+    merge = refs/heads/dev.fix
+[branch "master"]
+    remote = origin
+    merge = refs/heads/master
+[commit]
+	message = n
