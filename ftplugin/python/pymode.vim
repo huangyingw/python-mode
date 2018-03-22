@@ -46,11 +46,11 @@ if g:pymode_run
 endif
 
 " Add/remove breakpoints
-if g:pymode_breakpoint
-
-    exe "nnoremap <silent> <buffer> " g:pymode_breakpoint_bind ":call pymode#breakpoint#operate(line('.'))<CR>"
-
-endif
+"if g:pymode_breakpoint
+"
+"    exe "nnoremap <silent> <buffer> " g:pymode_breakpoint_bind ":call pymode#breakpoint#operate(line('.'))<CR>"
+"
+"endif
 
 " Python folding
 if g:pymode_folding
