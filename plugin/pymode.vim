@@ -156,7 +156,7 @@ call pymode#default("g:pymode_lint_options_pyflakes", { 'builtins': '_' })
 call pymode#default('g:pymode_breakpoint', 1)
 
 " Key's map for add/remove breakpoint
-call pymode#default('g:pymode_breakpoint_bind', '')
+call pymode#default('g:pymode_breakpoint_bind', '<leader>b')
 
 " Default pattern for making breakpoints. Leave this empty for auto search available debuggers (pdb, ipdb, ...)
 call pymode#default('g:pymode_breakpoint_cmd', '')
