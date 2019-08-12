@@ -8,7 +8,8 @@
     remote = origin
     remote = github
 [gsync]
-    remote = python-mode/master
+    remote = python-mode
+    branch = master
 [branch "dev"]
     remote = origin
     merge = refs/heads/dev
