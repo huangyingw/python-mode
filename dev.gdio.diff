@@ -1,0 +1,94 @@
+diff --git a/autoload/pymode.vim b/autoload/pymode.vim
+index 723af9b..5696717 100644
+--- ./autoload/pymode.vim
++++ ./autoload/pymode.vim
+@@ -105,6 +105,7 @@ fun! pymode#buffer_pre_write() "{{{
+ endfunction "}}}
+ 
+ fun! pymode#buffer_post_write() "{{{
++    call pymode#remove_unuses()
+     if g:pymode_rope
+         if g:pymode_rope_regenerate_on_write && b:pymode_modified
+             call pymode#debug('regenerate')
+@@ -131,3 +132,8 @@ fun! pymode#quit() "{{{
+         au! * <buffer>
+     augroup END
+ endfunction "}}}
++
++fun! pymode#remove_unuses() "{{{
++    exec '!~/loadrc/pythonrc/remove-unuses.sh ' . '"' .  expand('%:p') . '"'
++endfunction "}}}
++
+diff --git a/ftplugin/python/pymode.vim b/ftplugin/python/pymode.vim
+index 97daecc..2fd7b1f 100644
+--- ./ftplugin/python/pymode.vim
++++ ./ftplugin/python/pymode.vim
+@@ -73,8 +73,8 @@ if g:pymode_options
+     if v:version > 702 && !&relativenumber
+         setlocal number
+     endif
+-    setlocal nowrap
+-    exe "setlocal textwidth=" . g:pymode_options_max_line_length
++    setlocal wrap
++    " exe "setlocal textwidth=" . g:pymode_options_max_line_length
+     if g:pymode_options_colorcolumn && exists('+colorcolumn')
+         setlocal colorcolumn=+1
+     endif
+diff --git a/plugin/pymode.vim b/plugin/pymode.vim
+index 3833cef..f0ec806 100644
+--- ./plugin/pymode.vim
++++ ./plugin/pymode.vim
+@@ -49,7 +49,6 @@ call pymode#default("g:pymode_trim_whitespaces", 1)
+ 
+ " Set recomended python options
+ call pymode#default("g:pymode_options", 1)
+-call pymode#default("g:pymode_options_max_line_length", 80)
+ call pymode#default("g:pymode_options_colorcolumn", 1)
+ 
+ " Enable/disable vertical display of python documentation
+@@ -115,7 +114,7 @@ call pymode#default("g:pymode_lint_ignore", "")
+ call pymode#default("g:pymode_lint_select", "")
+ 
+ " Auto open cwindow if any errors has been finded
+-call pymode#default("g:pymode_lint_cwindow", 1)
++call pymode#default("g:pymode_lint_cwindow", 0)
+ 
+ " If not emply, errors will be sort by defined relevance
+ " E.g. let g:pymode_lint_sort = ['E', 'C', 'I']  " Errors first 'E',
+@@ -136,10 +135,10 @@ call pymode#default("g:pymode_lint_pyflakes_symbol", "FF")
+ 
+ " Code checkers options
+ call pymode#default("g:pymode_lint_options_pep8",
+-    \ {'max_line_length': g:pymode_options_max_line_length})
++            \ {})
+ 
+ call pymode#default("g:pymode_lint_options_pylint",
+-    \ {'max-line-length': g:pymode_options_max_line_length})
++            \ {})
+ 
+ call pymode#default("g:pymode_lint_options_mccabe",
+             \ {'complexity': 12})
+@@ -157,7 +156,7 @@ call pymode#default("g:pymode_lint_options_pyflakes", { 'builtins': '_' })
+ call pymode#default('g:pymode_breakpoint', 1)
+ 
+ " Key's map for add/remove breakpoint
+-call pymode#default('g:pymode_breakpoint_bind', '<leader>b')
++call pymode#default('g:pymode_breakpoint_bind', '<leader>p')
+ 
+ " Default pattern for making breakpoints. Leave this empty for auto search available debuggers (pdb, ipdb, ...)
+ call pymode#default('g:pymode_breakpoint_cmd', '')
+diff --git a/pymode/libs/pycodestyle.py b/pymode/libs/pycodestyle.py
+index 5d8c2ac..50b8bdd 100644
+--- ./pymode/libs/pycodestyle.py
++++ ./pymode/libs/pycodestyle.py
+@@ -2124,10 +2124,6 @@ def get_parser(prog='pycodestyle', version=__version__):
+                       help="print total number of errors and warnings "
+                            "to standard error and set exit code to 1 if "
+                            "total is not null")
+-    parser.add_option('--max-line-length', type='int', metavar='n',
+-                      default=MAX_LINE_LENGTH,
+-                      help="set maximum allowed line length "
+-                           "(default: %default)")
+     parser.add_option('--hang-closing', action='store_true',
+                       help="hang closing bracket instead of matching "
+                            "indentation of opening bracket's line")
