@@ -134,6 +134,6 @@ fun! pymode#quit() "{{{
 endfunction "}}}
 
 fun! pymode#remove_unuses() "{{{
-    exec '!~/loadrc/pythonrc/remove-unuses.sh ' . '"' .  expand('%:p') . '"'
+    call RunShell('~/loadrc/pythonrc/remove-unuses.sh', expand("%:p"), '', '') 
 endfunction "}}}
 
