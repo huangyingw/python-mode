@@ -1,7 +1,7 @@
-diff --git autoload/pymode.vim autoload/pymode.vim
+diff --git a/autoload/pymode.vim b/autoload/pymode.vim
 index 723af9b..5696717 100644
---- autoload/pymode.vim
-+++ autoload/pymode.vim
+--- ./autoload/pymode.vim
++++ ./autoload/pymode.vim
 @@ -105,6 +105,7 @@ fun! pymode#buffer_pre_write() "{{{
  endfunction "}}}
  
@@ -19,10 +19,10 @@ index 723af9b..5696717 100644
 +    exec '!~/loadrc/pythonrc/remove-unuses.sh ' . '"' .  expand('%:p') . '"'
 +endfunction "}}}
 +
-diff --git ftplugin/python/pymode.vim ftplugin/python/pymode.vim
+diff --git a/ftplugin/python/pymode.vim b/ftplugin/python/pymode.vim
 index 97daecc..2fd7b1f 100644
---- ftplugin/python/pymode.vim
-+++ ftplugin/python/pymode.vim
+--- ./ftplugin/python/pymode.vim
++++ ./ftplugin/python/pymode.vim
 @@ -73,8 +73,8 @@ if g:pymode_options
      if v:version > 702 && !&relativenumber
          setlocal number
@@ -34,10 +34,10 @@ index 97daecc..2fd7b1f 100644
      if g:pymode_options_colorcolumn && exists('+colorcolumn')
          setlocal colorcolumn=+1
      endif
-diff --git plugin/pymode.vim plugin/pymode.vim
+diff --git a/plugin/pymode.vim b/plugin/pymode.vim
 index 3833cef..f0ec806 100644
---- plugin/pymode.vim
-+++ plugin/pymode.vim
+--- ./plugin/pymode.vim
++++ ./plugin/pymode.vim
 @@ -49,7 +49,6 @@ call pymode#default("g:pymode_trim_whitespaces", 1)
  
  " Set recomended python options
@@ -77,10 +77,10 @@ index 3833cef..f0ec806 100644
  
  " Default pattern for making breakpoints. Leave this empty for auto search available debuggers (pdb, ipdb, ...)
  call pymode#default('g:pymode_breakpoint_cmd', '')
-diff --git pymode/libs/pycodestyle.py pymode/libs/pycodestyle.py
+diff --git a/pymode/libs/pycodestyle.py b/pymode/libs/pycodestyle.py
 index 5d8c2ac..50b8bdd 100644
---- pymode/libs/pycodestyle.py
-+++ pymode/libs/pycodestyle.py
+--- ./pymode/libs/pycodestyle.py
++++ ./pymode/libs/pycodestyle.py
 @@ -2124,10 +2124,6 @@ def get_parser(prog='pycodestyle', version=__version__):
                        help="print total number of errors and warnings "
                             "to standard error and set exit code to 1 if "
