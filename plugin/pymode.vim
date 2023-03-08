@@ -49,6 +49,7 @@ call pymode#default("g:pymode_trim_whitespaces", 1)
 
 " Set recomended python options
 call pymode#default("g:pymode_options", 1)
+call pymode#default("g:pymode_options_max_line_length", 80)
 call pymode#default("g:pymode_options_colorcolumn", 1)
 
 " Enable/disable vertical display of python documentation
@@ -114,7 +115,7 @@ call pymode#default("g:pymode_lint_ignore", "")
 call pymode#default("g:pymode_lint_select", "")
 
 " Auto open cwindow if any errors has been finded
-call pymode#default("g:pymode_lint_cwindow", 0)
+call pymode#default("g:pymode_lint_cwindow", 1)
 
 " If not emply, errors will be sort by defined relevance
 " E.g. let g:pymode_lint_sort = ['E', 'C', 'I']  " Errors first 'E',
@@ -135,10 +136,10 @@ call pymode#default("g:pymode_lint_pyflakes_symbol", "FF")
 
 " Code checkers options
 call pymode#default("g:pymode_lint_options_pep8",
-            \ {})
+    \ {'max_line_length': g:pymode_options_max_line_length})
 
 call pymode#default("g:pymode_lint_options_pylint",
-            \ {})
+    \ {'max-line-length': g:pymode_options_max_line_length})
 
 call pymode#default("g:pymode_lint_options_mccabe",
             \ {'complexity': 12})
@@ -156,7 +157,7 @@ call pymode#default("g:pymode_lint_options_pyflakes", { 'builtins': '_' })
 call pymode#default('g:pymode_breakpoint', 1)
 
 " Key's map for add/remove breakpoint
-call pymode#default('g:pymode_breakpoint_bind', '<leader>p')
+call pymode#default('g:pymode_breakpoint_bind', '<leader>b')
 
 " Default pattern for making breakpoints. Leave this empty for auto search available debuggers (pdb, ipdb, ...)
 call pymode#default('g:pymode_breakpoint_cmd', '')
