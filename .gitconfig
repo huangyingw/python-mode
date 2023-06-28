@@ -9,7 +9,7 @@
     remote = github
 [gsync]
     remote = python-mode
-    target = python-mode/master
+    target = python-mode/develop
 [branch "dev"]
     remote = origin
     merge = refs/heads/dev
