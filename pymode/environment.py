@@ -1,9 +1,13 @@
 """Define interfaces."""
 
+from __future__ import print_function
+
 import json
 import os.path
 import time
 import vim # noqa
+
+from ._compat import PY2
 
 
 class VimPymodeEnviroment(object):
@@ -49,10 +53,13 @@ class VimPymodeEnviroment(object):
         :return list:
 
         """
-        return self.curbuf
+        if not PY2:
+            return self.curbuf
+
+        return [l.decode(self.options.get('encoding')) for l in self.curbuf]
 
     @staticmethod
-    def var(name, to_bool=False, silence=False, default=None):
+    def var(name, to_bool=False, silence=False):
         """Get vim variable.
 
         :return vimobj:
@@ -62,7 +69,7 @@ class VimPymodeEnviroment(object):
             value = vim.eval(name)
         except vim.error:
             if silence:
-                return default
+                return None
             raise
 
         if to_bool:
@@ -84,30 +91,23 @@ class VimPymodeEnviroment(object):
 
         return vim.command('call pymode#wide_message("%s")' % str(msg))
 
-    def user_input(self, msg='', default=''):
+    def user_input(self, msg, default=''):
         """Return user input or default.
 
         :return str:
 
         """
-        prompt = []
-        prompt.append(str(self.prefix.strip()))
-        prompt.append(str(msg).strip())
+        msg = '%s %s ' % (self.prefix, msg)
 
         if default != '':
-            prompt.append('[%s]' % default)
-
-        prompt.append('> ')
-        prompt = ' '.join([s for s in prompt if s])
-
-        vim.command('echohl Debug')
+            msg += '[%s] ' % default
 
         try:
-            input_str = vim.eval('input(%r)' % (prompt,))
+            vim.command('echohl Debug')
+            input_str = vim.eval('input("%s> ")' % msg)
+            vim.command('echohl none')
         except KeyboardInterrupt:
             input_str = ''
-
-        vim.command('echohl none')
 
         return input_str or default
 
@@ -201,6 +201,9 @@ class VimPymodeEnviroment(object):
         if dumps:
             value = json.dumps(value)
 
+        if PY2:
+            value = value.decode('utf-8').encode(self.options.get('encoding'))
+
         return value
 
     def get_offset_params(self, cursor=None, base=""):
@@ -241,9 +244,6 @@ class VimPymodeEnviroment(object):
         """Open buffer."""
         if str(bufnr) != '-1':
             vim.command('buffer %s' % bufnr)
-
-    def select_line(self, start, end):
-        vim.command('normal %sggV%sgg' % (start, end))
 
 
 env = VimPymodeEnviroment()

@@ -1,6 +1,6 @@
 """ Python-mode async support. """
 
-from queue import Queue # noqa
+from ._compat import Queue
 
 
 RESULTS = Queue()

@@ -1,11 +1,13 @@
 """Integration with Rope library."""
 
+from __future__ import absolute_import, print_function
+
 import os.path
 import re
 import site
 import sys
 
-from rope.base import project, libutils, exceptions, change, worder, pycore, codeanalyze
+from rope.base import project, libutils, exceptions, change, worder, pycore
 from rope.base.fscommands import FileSystemCommands # noqa
 from rope.base.taskhandle import TaskHandle # noqa
 from rope.contrib import autoimport as rope_autoimport, codeassist, findit, generate # noqa
@@ -92,8 +94,7 @@ def complete(dot=False):
     line = env.lines[row - 1]
     cline = line[:col] + p_prefix + line[col:]
     if cline != line:
-        if 'noinsert' not in env.var('&completeopt'):
-            env.curbuf[row - 1] = env.prepare_value(cline, dumps=False)
+        env.curbuf[row - 1] = env.prepare_value(cline, dumps=False)
     env.current.window.cursor = (row, col + len(p_prefix))
     env.run('complete', col - len(prefix) + len(p_prefix) + 1, proposals)
     return True
@@ -182,9 +183,8 @@ def find_it():
             filename=oc.resource.path,
             text=env.lines[oc.lineno - 1] if oc.resource.real_path == env.curbuf.name else "", # noqa
             lnum=oc.lineno,
-            type=''
         ))
-    env.run('g:PymodeLocList.current().extend', lst)
+    env.let('loclist._loclist', lst)
 
 
 def update_python_path(paths):
@@ -233,8 +233,6 @@ def new():
         default = env.var('g:pymode_rope_project_root')
         if not default:
             default = env.var('getcwd()')
-        if sys.platform.startswith('win32'):
-            default = default.replace('\\', '/')
         root = env.var('input("Enter project root: ", "%s")' % default)
     ropefolder = env.var('g:pymode_rope_ropefolder')
     prj = project.Project(projectroot=root, ropefolder=ropefolder)
@@ -463,11 +461,10 @@ class Refactoring(object): # noqa
                 if not input_str:
                     return False
 
-                code_actions = self.get_code_actions()
                 action = env.user_input_choices(
-                    'Choose what to do:',
-                    *code_actions,
-                )
+                    'Choose what to do:', 'perform', 'preview',
+                    'perform in class hierarchy',
+                    'preview in class hierarchy')
 
                 in_hierarchy = action.endswith("in class hierarchy")
 
@@ -492,12 +489,6 @@ class Refactoring(object): # noqa
 
             except Exception as e: # noqa
                 env.error('Unhandled exception in Pymode: %s' % e)
-
-    def get_code_actions(self):
-        return [
-            'perform',
-            'preview',
-        ]
 
     @staticmethod
     def get_refactor(ctx):
@@ -553,14 +544,6 @@ class RenameRefactoring(Refactoring):
 
         return newname
 
-    def get_code_actions(self):
-        return [
-            'perform',
-            'preview',
-            'perform in class hierarchy',
-            'preview in class hierarchy',
-        ]
-
     @staticmethod
     def get_changes(refactor, input_str, in_hierarchy=False):
         """ Get changes.
@@ -592,7 +575,7 @@ class ExtractMethodRefactoring(Refactoring):
         _, offset1 = env.get_offset_params(cursor1)
         _, offset2 = env.get_offset_params(cursor2)
         return extract.ExtractMethod(
-            ctx.project, ctx.resource, offset1, offset2 + 1)
+            ctx.project, ctx.resource, offset1, offset2)
 
 
 class ExtractVariableRefactoring(Refactoring):
@@ -616,7 +599,7 @@ class ExtractVariableRefactoring(Refactoring):
         _, offset1 = env.get_offset_params(cursor1)
         _, offset2 = env.get_offset_params(cursor2)
         return extract.ExtractVariable(
-            ctx.project, ctx.resource, offset1, offset2 + 1)
+            ctx.project, ctx.resource, offset1, offset2)
 
 
 class InlineRefactoring(Refactoring):
@@ -716,15 +699,6 @@ class MoveRefactoring(Refactoring):
             offset = None
         return move.create_move(ctx.project, ctx.resource, offset)
 
-    @staticmethod
-    def get_changes(refactor, input_str, in_hierarchy=False):
-        with RopeContext() as ctx:
-            if isinstance(refactor, (move.MoveGlobal, move.MoveModule)):
-                dest = ctx.project.pycore.find_module(input_str)
-            else:
-                dest = input_str
-            return super(MoveRefactoring, MoveRefactoring).get_changes(refactor, dest)
-
 
 class ChangeSignatureRefactoring(Refactoring):
 
@@ -751,14 +725,6 @@ class ChangeSignatureRefactoring(Refactoring):
         _, offset = env.get_offset_params()
         return change_signature.ChangeSignature(
             ctx.project, ctx.resource, offset)
-
-    def get_code_actions(self):
-        return [
-            'perform',
-            'preview',
-            'perform in class hierarchy',
-            'preview in class hierarchy',
-        ]
 
     def get_changes(self, refactor, input_string, in_hierarchy=False):
         """ Function description.
@@ -927,7 +893,7 @@ def _insert_import(name, module, ctx):
         return True
 
     pyobject = ctx.project.pycore.resource_to_pyobject(ctx.resource)
-    import_tools = importutils.ImportTools(ctx.project)
+    import_tools = importutils.ImportTools(ctx.project.pycore)
     module_imports = import_tools.module_imports(pyobject)
     new_import = importutils.FromImport(module, 0, [[name, None]])
     module_imports.add_import(new_import)
@@ -951,22 +917,6 @@ def _insert_import(name, module, ctx):
     progress = ProgressHandler('Apply changes ...')
     ctx.project.do(changes, task_handle=progress.handle)
     reload_changes(changes)
-
-
-@env.catch_exceptions
-def select_logical_line():
-    source, offset = env.get_offset_params()
-    count = int(env.var('v:count1'))
-
-    lines = codeanalyze.SourceLinesAdapter(source)
-    start_line = lines.get_line_number(offset)
-    line_finder = codeanalyze.LogicalLineFinder(lines)
-
-    start_lineno, end_lineno = line_finder.logical_line_in(start_line)
-    for _, (_, end_lineno) in zip(range(count), line_finder.generate_regions(start_lineno)):
-        pass
-
-    env.select_line(start_lineno, end_lineno)
 
 
 # Monkey patch Rope
