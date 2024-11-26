@@ -62,7 +62,7 @@ endfunction "}}}
 " DESC: Open temp buffer.
 fun! pymode#tempbuffer_open(name) "{{{
     pclose
-    exe g:pymode_preview_position . " " . g:pymode_preview_height . "new " . a:name
+    exe "botright 8new " . a:name
     setlocal buftype=nofile bufhidden=delete noswapfile nowrap previewwindow
     redraw
 endfunction "}}}
@@ -71,10 +71,11 @@ endfunction "}}}
 fun! pymode#trim_whitespaces() "{{{
     if g:pymode_trim_whitespaces
         let cursor_pos = getpos('.')
-        silent! %s/\s\+$//e
+        silent! %s/\s\+$//
         call setpos('.', cursor_pos)
     endif
 endfunction "}}}
+
 
 fun! pymode#save() "{{{
     if &modifiable && &modified
@@ -104,7 +105,6 @@ fun! pymode#buffer_pre_write() "{{{
 endfunction "}}}
 
 fun! pymode#buffer_post_write() "{{{
-    call pymode#remove_unuses()
     if g:pymode_rope
         if g:pymode_rope_regenerate_on_write && b:pymode_modified
             call pymode#debug('regenerate')
@@ -120,25 +120,9 @@ fun! pymode#buffer_post_write() "{{{
 endfunction "}}}
 
 fun! pymode#debug(msg) "{{{
-    " Pymode's debug function.
-    " Should be called by other pymode's functions to report outputs. See
-    " the function PymodeDebugFolding for example.
-    " TODO: why echom here creates a problem?
-    " echom '' . a:msg + '|||||||||||'
-
-    let l:info_separator = repeat('-', 79)
-
     if g:pymode_debug
-        if ! exists('g:pymode_debug_counter')
-            let g:pymode_debug_counter = 0
-        endif
-        let g:pymode_debug_counter += 1
-        " NOTE: Print a separator for every message except folding ones (since
-        " they could be many).
-        if a:msg !~ 'has folding:'
-            echom l:info_separator
-        endif
-        echom '' . 'pymode debug msg ' . g:pymode_debug_counter . ': ' . a:msg
+        let g:pymode_debug += 1
+        echom string(g:pymode_debug) . ': ' . string(a:msg)
     endif
 endfunction "}}}
 
@@ -147,8 +131,3 @@ fun! pymode#quit() "{{{
         au! * <buffer>
     augroup END
 endfunction "}}}
-
-fun! pymode#remove_unuses() "{{{
-    exec '!~/loadrc/pythonrc/remove-unuses.sh ' . '"' .  expand('%:p') . '"'
-endfunction "}}}
-
